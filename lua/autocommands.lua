@@ -46,7 +46,9 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.api.nvim_create_autocmd('UIEnter', {
   group = augroup,
   callback = function(_)
-    vim.cmd.colorscheme 'kanagawa'
+    if package.loaded['kanagawa'] then
+      vim.cmd.colorscheme 'kanagawa'
+    end
   end,
   desc = 'Fix mini starter wrongly applied theme',
 })

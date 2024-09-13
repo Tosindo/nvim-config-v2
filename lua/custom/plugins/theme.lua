@@ -19,7 +19,6 @@ return { -- You can easily change to a different colorscheme.
 
         return {
           DiagnosticDeprecated = {
-            fg = theme.diag.warning,
             strikethrough = true,
           },
 
