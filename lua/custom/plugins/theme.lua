@@ -15,11 +15,42 @@ return { -- You can easily change to a different colorscheme.
 
       overrides = function(colors)
         local theme = colors.theme
+        local pallete = colors.palette
 
         return {
           DiagnosticDeprecated = {
             fg = theme.diag.warning,
             strikethrough = true,
+          },
+
+          StatuslineAccent = {
+            bg = pallete.roninYellow,
+            fg = pallete.sumiInk0,
+          },
+
+          StatuslineInsertAccent = {
+            bg = pallete.crystalBlue,
+            fg = pallete.fujiWhite,
+          },
+
+          StatuslineVisualAccent = {
+            bg = pallete.oniViolet,
+            fg = pallete.fujiWhite,
+          },
+
+          StatuslineReplaceAccent = {
+            bg = pallete.peachRed,
+            fg = pallete.fujiWhite,
+          },
+
+          StatuslineCmdLineAccent = {
+            bg = pallete.fujiWhite,
+            fg = pallete.sumiInk0,
+          },
+
+          StatuslineTerminalAccent = {
+            bg = pallete.springGreen,
+            fg = pallete.sumiInk0,
           },
         }
       end,

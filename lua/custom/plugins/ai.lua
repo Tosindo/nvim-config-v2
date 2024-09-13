@@ -13,14 +13,10 @@ return {
     cmd = 'Copilot',
     config = function()
       require('copilot').setup {
-        suggestion = {
-          enabled = true,
-          auto_trigger = true,
-          keymap = {
-            accept = '<tab>',
-            dismiss = '<esc>',
-          },
-        },
+        -- handled by copilot-cmp
+        suggestion = { enabled = false },
+        -- handled by copilot-cmp
+        panel = { enabled = false },
       }
     end,
   },

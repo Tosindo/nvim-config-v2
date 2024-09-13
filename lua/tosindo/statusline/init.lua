@@ -1,5 +1,7 @@
 local M = {}
 
+local cpl = require 'tosindo.statusline.copilot'
+
 local modes = {
   ['n'] = 'NORMAL',
   ['no'] = 'NORMAL',
@@ -138,12 +140,34 @@ local vcs = function()
   }
 end
 
+local copilot_attached = false
+
+local function copilot()
+  -- All copilot API calls are blocking before copilot is attached,
+  -- To avoid blocking the startup time, we check if copilot is attached
+  local copilot_loaded = package.loaded['copilot'] ~= nil
+  if not copilot_loaded or not copilot_attached then
+    return ' '
+  end
+
+  if cpl.is_loading() then
+    return ' '
+  elseif not cpl.is_enabled() then
+    return '󰚩 '
+  elseif cpl.is_sleep() then
+    return '󰒲 '
+  else
+    return '󱚡 '
+  end
+end
+
 M.active = function()
   return table.concat {
     '%#Statusline#',
     update_mode_colors(),
     mode(),
     '%#Normal# ',
+    copilot(),
     vcs(),
     filepath(),
     filename(),
@@ -180,7 +204,7 @@ function M.setup()
       end
 
       vim.opt_local.statusline = M.active()
-      vim.b.has_custom_statusline = 'active'
+      vim.w.has_custom_statusline = 'active'
     end,
   })
 
@@ -195,7 +219,7 @@ function M.setup()
       end
 
       vim.opt_local.statusline = M.inactive()
-      vim.b.has_custom_statusline = 'inactive'
+      vim.w.has_custom_statusline = 'inactive'
     end,
   })
 
@@ -205,11 +229,35 @@ function M.setup()
   }, {
     group = statusline_group,
     callback = function()
-      if vim.b.has_custom_statusline ~= 'active' then
+      if vim.w.has_custom_statusline ~= 'active' then
         return
       end
 
       vim.opt_local.statusline = M.active()
+    end,
+  })
+
+  vim.api.nvim_create_autocmd('LspAttach', {
+    group = statusline_group,
+    desc = 'Update copilot attached status',
+    callback = function(args)
+      local client = vim.lsp.get_client_by_id(args.data.client_id)
+      if client and client.name == 'copilot' then
+        copilot_attached = true
+        require('copilot.api').register_status_notification_handler(function()
+          -- find buffer with b.has_custom_statusline == 'active'
+          -- and set it to the M.active()
+          for _, win in ipairs(vim.api.nvim_list_wins()) do
+            if vim.w[win].has_custom_statusline == 'active' then
+              vim.api.nvim_set_option_value('statusline', M.active(), {
+                win = win,
+              })
+            end
+          end
+        end)
+        return true
+      end
+      return false
     end,
   })
 end
