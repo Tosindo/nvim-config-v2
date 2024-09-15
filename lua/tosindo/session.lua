@@ -29,7 +29,7 @@ function M.setup(opts)
     desc = 'Automatically save session on exit',
   })
 
-  vim.api.nvim_create_user_command('SessionList', function(opts)
+  vim.api.nvim_create_user_command('SessionList', function()
     M.list_sessions_command(opts.args)
   end, {
     nargs = '?',
@@ -38,7 +38,7 @@ function M.setup(opts)
     end,
   })
 
-  vim.api.nvim_create_user_command('SessionLoad', function(opts)
+  vim.api.nvim_create_user_command('SessionLoad', function()
     M.load_session_command(opts.args)
   end, { nargs = 1, complete = M.complete_sessions })
 end
@@ -84,8 +84,12 @@ end
 local function close_auto_close_buffers()
   local closed_buffers = {}
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    local buftype = vim.api.nvim_buf_get_option(buf, 'buftype')
-    local filetype = vim.api.nvim_buf_get_option(buf, 'filetype')
+    local buftype = vim.api.nvim_get_option_value('buftype', {
+      buf = buf,
+    })
+    local filetype = vim.api.nvim_get_option_value('filetype', {
+      buf = buf,
+    })
 
     if vim.tbl_contains(M.config.auto_close.buftypes, buftype) or vim.tbl_contains(M.config.auto_close.filetypes, filetype) then
       table.insert(closed_buffers, {
@@ -105,8 +109,14 @@ local function restore_closed_buffers(closed_buffers)
   for _, buf_info in ipairs(closed_buffers) do
     local new_buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_name(new_buf, buf_info.name)
-    vim.api.nvim_buf_set_option(new_buf, 'buftype', buf_info.buftype)
-    vim.api.nvim_buf_set_option(new_buf, 'filetype', buf_info.filetype)
+
+    vim.api.nvim_set_option_value('buftype', buf_info.buftype, {
+      buf = new_buf,
+    })
+
+    vim.api.nvim_set_option_value('filetype', buf_info.filetype, {
+      buf = new_buf,
+    })
   end
 end
 
@@ -241,7 +251,7 @@ function M.complete_sessions(_, _, _)
       table.insert(branches, branch)
     end
     table.sort(branches)
-    for i, branch in ipairs(branches) do
+    for i, _ in ipairs(branches) do
       table.insert(completions, tostring(i))
     end
   end
