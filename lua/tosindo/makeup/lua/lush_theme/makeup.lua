@@ -65,7 +65,15 @@ local palette = {
     fg = hsl(236, 100, 90),
     fg2 = hsl(236, 81, 92),
     fg3 = hsl(236, 78, 96),
+    fg4 = hsl(236, 78, 98),
+    fg5 = hsl(236, 78, 100),
+    fg6 = hsl(236, 78, 100),
     bg = hsl(236, 100, 20),
+    bg2 = hsl(236, 100, 30),
+    bg3 = hsl(236, 100, 40),
+    bg4 = hsl(236, 100, 50),
+    bg5 = hsl(236, 100, 60),
+    bg6 = hsl(236, 100, 70),
   },
   red = {
     fg = hsl(0, 100, 80),
@@ -98,7 +106,9 @@ local palette = {
   },
   orange = {
     fg = hsl(30, 100, 80),
+    fg2 = hsl(30, 100, 85),
     bg = hsl(30, 100, 20),
+    bg2 = hsl(30, 100, 30),
   },
   teal = {
     fg = hsl(180, 100, 80),
@@ -317,9 +327,16 @@ local theme = lush(function(injected_functions)
       bg = palette.bg6,
       bold = true,
     }, -- Popup menu: Thumb of the scrollbar.
-    -- Question       { }, -- |hit-enter| prompt and yes/no questions
-    -- QuickFixLine   { }, -- Current |quickfix| item in the quickfix window. Combined with |hl-CursorLine| when the cursor is there.
-    -- Search         { }, -- Last search pattern highlighting (see 'hlsearch'). Also used for similar items that need to stand out.
+    Question {
+      fg = palette.orange.fg2,
+    }, -- |hit-enter| prompt and yes/no questions
+    QuickFixLine {
+      fg = palette.teal.fg,
+    }, -- Current |quickfix| item in the quickfix window. Combined with |hl-CursorLine| when the cursor is there.
+    Search {
+      fg = palette.yellow.fg2,
+      bg = palette.yellow.bg2,
+    }, -- Last search pattern highlighting (see 'hlsearch'). Also used for similar items that need to stand out.
     -- SpecialKey     { }, -- Unprintable characters: text displayed differently from what it really is. But not 'listchars' whitespace. |hl-Whitespace|
     -- SpellBad       { }, -- Word that is not recognized by the spellchecker. |spell| Combined with the highlighting used otherwise.
     -- SpellCap       { }, -- Word that should start with a capital. |spell| Combined with the highlighting used otherwise.
