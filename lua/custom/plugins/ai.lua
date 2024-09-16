@@ -34,6 +34,15 @@ return {
     },
     config = function()
       require('codecompanion').setup {
+        adapters = {
+          anthropic = function()
+            return require('codecompanion.adapters').extend('anthropic', {
+              env = {
+                api_key = 'cmd:op read op://personal/Anthropic/credential --no-newline',
+              },
+            })
+          end,
+        },
         strategies = {
           chat = {
             adapter = 'anthropic',
@@ -44,15 +53,6 @@ return {
           agent = {
             adapter = 'anthropic',
           },
-        },
-        adapter = {
-          anthropic = function()
-            return require('codecompanion.adapters').extend('anthropic', {
-              env = {
-                api_key = 'cmd:op read op://personal/Anthropic/credential --no-newline',
-              },
-            })
-          end,
         },
       }
 

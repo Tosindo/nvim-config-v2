@@ -42,6 +42,9 @@ return {
 
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
+
+      -- java
+      'nvim-java/nvim-java',
     },
     config = function()
       local nix_env = require 'nix-env'
@@ -246,6 +249,7 @@ return {
         'eslint_d',
         'typescript-language-server',
         'rnix-lsp',
+        'jdtls',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -265,11 +269,17 @@ return {
             require('lspconfig')[server_name].setup(server)
           end,
         },
+        jdtls = function()
+          require('java').setup {}
+
+          require('lspconfig').jdtls.setup {}
+        end,
       }
     end,
   },
-  {
-    'hinell/lsp-timeout.nvim',
-    dependencies = { 'neovim/nvim-lspconfig' },
-  },
+  -- disabled because it's suspected to cause conform to format with all LSPs on wrong buffers
+  -- {
+  --   'hinell/lsp-timeout.nvim',
+  --   dependencies = { 'neovim/nvim-lspconfig' },
+  -- },
 }
