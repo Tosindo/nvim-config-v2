@@ -34,11 +34,22 @@ return {
     formatters_by_ft = {
       lua = { 'stylua' },
       nix = { 'nixfmt' },
-      -- Conform can also run multiple formatters sequentially
-      -- python = { "isort", "black" },
-      --
-      -- You can use 'stop_after_first' to run the first available formatter from the list
-      javascript = { 'prettierd', 'prettier', stop_after_first = true },
     },
   },
+  config = function(_, opts)
+    local js_fts = {
+      'javascript',
+      'javascriptreact',
+      'javascript.jsx',
+      'typescript',
+      'typescriptreact',
+      'typescript.tsx',
+    }
+
+    for _, ft in ipairs(js_fts) do
+      opts.formatters_by_ft[ft] = { 'prettierd', 'prettier', stop_after_first = true }
+    end
+
+    require('conform').setup(opts)
+  end,
 }

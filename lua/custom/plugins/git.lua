@@ -13,11 +13,25 @@ return {
     config = function()
       local neogit = require 'neogit'
 
-      neogit.setup()
+      neogit.setup {}
 
       vim.keymap.set('n', ';ng', function()
         neogit.open()
       end, { desc = 'Open Neogit' })
+    end,
+  },
+  {
+    'pwntester/octo.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-telescope/telescope.nvim',
+      -- OR 'ibhagwan/fzf-lua',
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('octo').setup {
+        default_to_projects_v2 = true,
+      }
     end,
   },
 }

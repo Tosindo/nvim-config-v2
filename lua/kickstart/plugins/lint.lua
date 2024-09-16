@@ -9,6 +9,12 @@ return {
         markdown = { 'markdownlint' },
       }
 
+      local js_fts = { 'javascript', 'javascriptreact', 'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx', 'vue', 'svelte', 'astro' }
+
+      for _, ft in ipairs(js_fts) do
+        lint.linters_by_ft[ft] = { 'eslint_d' }
+      end
+
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
       -- instead set linters_by_ft like this:
       -- lint.linters_by_ft = lint.linters_by_ft or {}

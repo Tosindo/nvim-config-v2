@@ -45,35 +45,48 @@
 local lush = require 'lush'
 local hsl = lush.hsl
 
--- inspired on the palette from tokyonight
--- to make sure I have a wide range of colors
 local palette = {
   fg_contrast = hsl(0, 0, 100),
-  fg = hsl(0, 0, 93),
-  fg2 = hsl(0, 0, 86),
-  fg3 = hsl(0, 0, 73),
-  fg4 = hsl(0, 0, 66),
-  fg5 = hsl(0, 0, 59),
+  fg = hsl(32, 30, 100),
+  fg2 = hsl(32, 30, 90),
+  fg3 = hsl(32, 30, 79),
+  fg4 = hsl(32, 30, 66),
+  fg5 = hsl(32, 30, 59),
+  fg6 = hsl(32, 30, 52),
   bg_contrast = hsl(0, 0, 0),
-  bg = hsl(0, 0, 12),
-  bg2 = hsl(0, 0, 15),
-  bg3 = hsl(0, 0, 17),
-  bg4 = hsl(0, 0, 20),
-  bg5 = hsl(0, 0, 23),
-  bg6 = hsl(0, 0, 33),
-  blue = {
-    fg = hsl(236, 100, 90),
-    fg2 = hsl(236, 81, 92),
-    fg3 = hsl(236, 78, 96),
-    fg4 = hsl(236, 78, 98),
-    fg5 = hsl(236, 78, 100),
-    fg6 = hsl(236, 78, 100),
-    bg = hsl(236, 100, 20),
-    bg2 = hsl(236, 100, 30),
-    bg3 = hsl(236, 100, 40),
-    bg4 = hsl(236, 100, 50),
-    bg5 = hsl(236, 100, 60),
-    bg6 = hsl(236, 100, 70),
+  bg = hsl(32, 12, 8),
+  bg2 = hsl(32, 24, 11),
+  bg3 = hsl(32, 32, 13),
+  bg4 = hsl(32, 44, 16),
+  bg5 = hsl(32, 56, 19),
+  bg6 = hsl(32, 67, 29),
+  secondary = {
+    fg = hsl(218, 92, 90),
+    fg2 = hsl(218, 81, 92),
+    fg3 = hsl(218, 78, 96),
+    fg4 = hsl(218, 78, 98),
+    fg5 = hsl(218, 78, 100),
+    fg6 = hsl(218, 78, 100),
+    bg = hsl(218, 100, 20),
+    bg2 = hsl(218, 100, 30),
+    bg3 = hsl(218, 100, 40),
+    bg4 = hsl(218, 100, 50),
+    bg5 = hsl(218, 100, 60),
+    bg6 = hsl(218, 100, 70),
+  },
+  tertiary = {
+    fg = hsl(261, 92, 84),
+    fg2 = hsl(261, 81, 92),
+    fg3 = hsl(261, 78, 96),
+    fg4 = hsl(261, 78, 98),
+    fg5 = hsl(261, 78, 100),
+    fg6 = hsl(261, 78, 100),
+    bg = hsl(261, 92, 20),
+    bg2 = hsl(261, 92, 30),
+    bg3 = hsl(261, 92, 40),
+    bg4 = hsl(261, 92, 50),
+    bg5 = hsl(261, 92, 60),
+    bg6 = hsl(261, 92, 70),
   },
   red = {
     fg = hsl(0, 100, 80),
@@ -87,7 +100,7 @@ local palette = {
   },
   yellow = {
     fg = hsl(45, 100, 10),
-    fg2 = hsl(45, 100, 90),
+    fg2 = hsl(45, 100, 70),
     bg = hsl(45, 100, 55),
     bg2 = hsl(45, 100, 30),
   },
@@ -104,17 +117,21 @@ local palette = {
     fg = hsl(270, 100, 80),
     bg = hsl(270, 100, 20),
   },
-  orange = {
-    fg = hsl(30, 100, 80),
-    fg2 = hsl(30, 100, 85),
-    bg = hsl(30, 100, 20),
-    bg2 = hsl(30, 100, 30),
-  },
   teal = {
     fg = hsl(180, 100, 80),
     bg = hsl(180, 100, 20),
   },
+
   comment = hsl(0, 0, 40),
+
+  menu = {
+    bg = hsl(37, 100, 4),
+    fg = hsl(37, 100, 90),
+    scrollbar = {
+      bg = hsl(37, 100, 10),
+      thumb = hsl(37, 100, 20),
+    },
+  },
 
   git = {
     added = {
@@ -180,11 +197,10 @@ local theme = lush(function(injected_functions)
       bg = palette.bg5,
     }, -- Screen-column at the cursor, when 'cursorcolumn' is set.
     CursorLine {
-      fg = palette.fg5,
-      bg = palette.bg5,
+      bg = palette.bg3,
     }, -- Screen-line at the cursor, when 'cursorline' is set. Low-priority if foreground (ctermfg OR guifg) is not set.
     Directory {
-      fg = palette.blue.fg2,
+      fg = palette.secondary.fg2,
     }, -- Directory names (and other special names in listings)
     DiffAdd {
       fg = palette.git.added.fg,
@@ -269,7 +285,7 @@ local theme = lush(function(injected_functions)
       bg = palette.bg6,
     }, -- Separator for scrolled messages, `msgsep` flag of 'display'
     MoreMsg {
-      fg = palette.orange.fg,
+      fg = palette.secondary.fg,
     }, -- |more-prompt|
     NonText {
       fg = palette.bg6,
@@ -287,7 +303,7 @@ local theme = lush(function(injected_functions)
       bg = palette.bg3,
     }, -- Border of floating windows.
     FloatTitle {
-      fg = palette.blue.fg,
+      fg = palette.secondary.fg,
       bg = palette.bg3,
       bold = true,
     }, -- Title of floating windows.
@@ -295,40 +311,40 @@ local theme = lush(function(injected_functions)
       fg = palette.fg4,
     }, -- normal text in non-current windows
     Pmenu {
-      fg = palette.fg3,
-      bg = palette.bg5,
+      fg = palette.menu.fg,
+      bg = palette.menu.bg,
     }, -- Popup menu: Normal item.
     PmenuSel {
       fg = palette.fg_contrast,
-      bg = palette.bg6,
+      bg = palette.menu.bg.lighten(10),
     }, -- Popup menu: Selected item.
     PmenuKind {
-      fg = palette.fg3,
-      bg = palette.bg5,
+      fg = palette.menu.fg.darken(10),
+      bg = palette.menu.bg.saturation(30),
     }, -- Popup menu: Normal item "kind"
     PmenuKindSel {
       fg = palette.fg_contrast,
-      bg = palette.bg6,
+      bg = palette.menu.bg.saturation(30).lighten(10),
     }, -- Popup menu: Selected item "kind"
     PmenuExtra {
-      fg = palette.fg4,
-      bg = palette.bg5,
+      fg = palette.menu.fg.darken(30),
+      bg = palette.menu.bg.lighten(10),
     }, -- Popup menu: Normal item "extra text"
     PmenuExtraSel {
-      fg = palette.fg_contrast,
-      bg = palette.bg6,
+      fg = palette.menu.fg.darken(30),
+      bg = palette.menu.bg.lighten(5),
     }, -- Popup menu: Selected item "extra text"
     PmenuSbar {
-      fg = palette.fg5,
-      bg = palette.bg5,
+      fg = palette.menu.scrollbar.bg.lighten(20),
+      bg = palette.menu.scrollbar.bg,
     }, -- Popup menu: Scrollbar.
     PmenuThumb {
-      fg = palette.fg5,
-      bg = palette.bg6,
+      fg = palette.menu.scrollbar.thumb.lighten(20),
+      bg = palette.menu.scrollbar.thumb,
       bold = true,
     }, -- Popup menu: Thumb of the scrollbar.
     Question {
-      fg = palette.orange.fg2,
+      fg = palette.secondary.fg2,
     }, -- |hit-enter| prompt and yes/no questions
     QuickFixLine {
       fg = palette.teal.fg,
@@ -337,25 +353,78 @@ local theme = lush(function(injected_functions)
       fg = palette.yellow.fg2,
       bg = palette.yellow.bg2,
     }, -- Last search pattern highlighting (see 'hlsearch'). Also used for similar items that need to stand out.
-    -- SpecialKey     { }, -- Unprintable characters: text displayed differently from what it really is. But not 'listchars' whitespace. |hl-Whitespace|
-    -- SpellBad       { }, -- Word that is not recognized by the spellchecker. |spell| Combined with the highlighting used otherwise.
-    -- SpellCap       { }, -- Word that should start with a capital. |spell| Combined with the highlighting used otherwise.
-    -- SpellLocal     { }, -- Word that is recognized by the spellchecker as one that is used in another region. |spell| Combined with the highlighting used otherwise.
-    -- SpellRare      { }, -- Word that is recognized by the spellchecker as one that is hardly ever used. |spell| Combined with the highlighting used otherwise.
-    -- StatusLine     { }, -- Status line of current window
-    -- StatusLineNC   { }, -- Status lines of not-current windows. Note: If this is equal to "StatusLine" Vim will use "^^^" in the status line of the current window.
-    -- TabLine        { }, -- Tab pages line, not active tab page label
-    -- TabLineFill    { }, -- Tab pages line, where there are no labels
-    -- TabLineSel     { }, -- Tab pages line, active tab page label
-    -- Title          { }, -- Titles for output from ":set all", ":autocmd" etc.
-    -- Visual         { }, -- Visual mode selection
-    -- VisualNOS      { }, -- Visual mode selection when vim is "Not Owning the Selection".
-    -- WarningMsg     { }, -- Warning messages
-    -- Whitespace     { }, -- "nbsp", "space", "tab" and "trail" in 'listchars'
-    -- Winseparator   { }, -- Separator between window splits. Inherts from |hl-VertSplit| by default, which it will replace eventually.
-    -- WildMenu       { }, -- Current match in 'wildmenu' completion
-    -- WinBar         { }, -- Window bar of current window
-    -- WinBarNC       { }, -- Window bar of not-current windows
+    SpecialKey {
+      fg = palette.bg6,
+    }, -- Unprintable characters: text displayed differently from what it really is. But not 'listchars' whitespace. |hl-Whitespace|
+    SpellBad {
+      undercurl = true,
+      sp = palette.red.fg,
+    }, -- Word that is not recognized by the spellchecker. |spell| Combined with the highlighting used otherwise.
+    SpellCap {
+      undercurl = true,
+      sp = palette.yellow.fg2,
+    }, -- Word that should start with a capital. |spell| Combined with the highlighting used otherwise.
+    SpellLocal {
+      undercurl = true,
+      sp = palette.green.fg,
+    }, -- Word that is recognized by the spellchecker as one that is used in another region. |spell| Combined with the highlighting used otherwise.
+    SpellRare {
+      undercurl = true,
+      sp = palette.secondary.fg,
+    }, -- Word that is recognized by the spellchecker as one that is hardly ever used. |spell| Combined with the highlighting used otherwise.
+    StatusLine {
+      bg = palette.fg3,
+      fg = palette.bg3,
+    }, -- Status line of current window
+    StatusLineNC {
+      bg = palette.bg5,
+      fg = palette.fg4,
+    }, -- Status lines of not-current windows. Note: If this is equal to "StatusLine" Vim will use "^^^" in the status line of the current window.
+    TabLine {
+      bg = palette.bg5,
+      fg = palette.fg4,
+    }, -- Tab pages line, not active tab page label
+    TabLineFill {
+      bg = palette.bg5,
+      fg = palette.fg4,
+    }, -- Tab pages line, where there are no labels
+    TabLineSel {
+      fg = palette.bg6,
+    }, -- Tab pages line, active tab page label
+    Title {
+      fg = palette.fg,
+      bold = true,
+    }, -- Titles for output from ":set all", ":autocmd" etc.
+    Visual {
+      bg = palette.bg6,
+      fg = palette.fg6,
+    }, -- Visual mode selection
+    VisualNOS {
+      bg = palette.bg6,
+      fg = palette.fg6,
+    }, -- Visual mode selection when vim is "Not Owning the Selection".
+    WarningMsg {
+      fg = palette.yellow.fg2,
+    }, -- Warning messages
+    Whitespace {
+      fg = palette.bg6,
+    }, -- "nbsp", "space", "tab" and "trail" in 'listchars'
+    Winseparator {
+      bg = palette.bg,
+      fg = palette.fg2,
+    }, -- Separator between window splits. Inherts from |hl-VertSplit| by default, which it will replace eventually.
+    WildMenu {
+      bg = palette.bg4,
+      fg = palette.fg,
+    }, -- Current match in 'wildmenu' completion
+    WinBar {
+      bg = palette.bg5,
+      fg = palette.fg4,
+    }, -- Window bar of current window
+    WinBarNC {
+      bg = palette.bg5,
+      fg = palette.fg4,
+    }, -- Window bar of not-current windows
 
     -- Common vim syntax groups used for all kinds of code and markup.
     -- Commented-out groups should chain up to their preferred (*) group
@@ -369,50 +438,110 @@ local theme = lush(function(injected_functions)
       fg = palette.comment,
     }, -- Any comment
 
-    -- Constant       { }, -- (*) Any constant
+    Constant {
+      fg = palette.secondary.bg6,
+    }, -- (*) Any constant
     String {
       fg = palette.green.fg,
     }, --   A string constant: "this is a string"
-    -- Character      { }, --   A character constant: 'c', '\n'
-    -- Number         { }, --   A number constant: 234, 0xff
-    -- Boolean        { }, --   A boolean constant: TRUE, false
-    -- Float          { }, --   A floating point constant: 2.3e10
-
+    Character {
+      fg = palette.green.fg.darken(20),
+    }, --   A character constant: 'c', '\n'
+    Number {
+      fg = palette.fg6.saturation(80),
+    }, --   A number constant: 234, 0xff
+    Boolean {
+      fg = palette.cyan.fg,
+    }, --   A boolean constant: TRUE, false
+    Float {
+      fg = palette.fg6.saturation(80),
+    }, --   A floating point constant: 2.3e10
     Identifier {
-      fg = palette.blue.fg,
-    }, -- (*) Any variable name
-    -- Function       { }, --   Function name (also: methods for classes)
+      fg = palette.secondary.fg,
+    },
 
-    -- Statement      { }, -- (*) Any statement
-    -- Conditional    { }, --   if, then, else, endif, switch, etc.
-    -- Repeat         { }, --   for, do, while, etc.
-    -- Label          { }, --   case, default, etc.
-    -- Operator       { }, --   "sizeof", "+", "*", etc.
-    -- Keyword        { }, --   any other keyword
-    -- Exception      { }, --   try, catch, throw
+    Function {
+      fg = palette.tertiary.bg6,
+    }, --   Function name (also: methods for classes)
 
-    -- PreProc        { }, -- (*) Generic Preprocessor
-    -- Include        { }, --   Preprocessor #include
-    -- Define         { }, --   Preprocessor #define
-    -- Macro          { }, --   Same as Define
-    -- PreCondit      { }, --   Preprocessor #if, #else, #endif, etc.
+    Statement {
+      fg = palette.secondary.fg3,
+    }, -- (*) Any statement
+    Conditional {
+      fg = palette.secondary.fg3,
+    }, --   if, then, else, endif, switch, etc.
+    Repeat {
+      fg = palette.secondary.fg3,
+    }, --   for, do, while, etc.
+    Label {
+      fg = palette.secondary.fg3,
+    }, --   case, default, etc.
+    Operator {
+      fg = palette.secondary.fg3,
+    }, --   "sizeof", "+", "*", etc.
+    Keyword {
+      fg = palette.secondary.fg3.saturation(20).darken(30),
+    }, --   any other keyword
+    Exception {
+      fg = palette.secondary.fg3,
+    }, --   try, catch, throw
 
-    -- Type           { }, -- (*) int, long, char, etc.
-    -- StorageClass   { }, --   static, register, volatile, etc.
-    -- Structure      { }, --   struct, union, enum, etc.
-    -- Typedef        { }, --   A typedef
+    PreProc {
+      fg = palette.tertiary.fg2,
+    }, -- (*) Generic Preprocessor
+    Include {
+      fg = palette.tertiary.fg2,
+    }, --   Preprocessor #include
+    Define {
+      fg = palette.tertiary.fg2,
+    }, --   Preprocessor #define
+    Macro {
+      fg = palette.tertiary.fg2,
+    }, --   Same as Define
+    PreCondit {
+      fg = palette.tertiary.fg2,
+    }, --   Preprocessor #if, #else, #endif, etc.
 
-    -- Special        { }, -- (*) Any special symbol
-    -- SpecialChar    { }, --   Special character in a constant
-    -- Tag            { }, --   You can use CTRL-] on this
-    -- Delimiter      { }, --   Character that needs attention
-    -- SpecialComment { }, --   Special things inside a comment (e.g. '\n')
-    -- Debug          { }, --   Debugging statements
+    Type {
+      fg = palette.tertiary.fg,
+    }, -- (*) int, long, char, etc.
+    StorageClass {
+      fg = palette.tertiary.fg,
+    }, --   static, register, volatile, etc.
+    Structure {
+      fg = palette.tertiary.fg,
+    }, --   struct, union, enum, etc.
+    Typedef {
+      fg = palette.tertiary.fg,
+    }, --   A typedef
 
-    -- Underlined     { gui = "underline" }, -- Text that stands out, HTML links
-    -- Ignore         { }, -- Left blank, hidden |hl-Ignore| (NOTE: May be invisible here in template)
-    -- Error          { }, -- Any erroneous construct
-    -- Todo           { }, -- Anything that needs extra attention; mostly the keywords TODO FIXME and XXX
+    Special {
+      fg = palette.teal.fg,
+    }, -- (*) Any special symbol
+    SpecialChar {
+      fg = palette.teal.fg,
+    }, --   Special character in a constant
+    Tag {
+      fg = palette.teal.fg,
+    }, --   You can use CTRL-] on this
+    Delimiter {
+      fg = palette.fg.lighten(20),
+    }, --   Character that needs attention
+    SpecialComment {
+      fg = palette.teal.fg,
+    }, --   Special things inside a comment (e.g. '\n')
+    Debug {
+      fg = palette.teal.fg,
+    }, --   Debugging statements
+
+    Underlined { gui = 'underline' }, -- Text that stands out, HTML links
+    Ignore {}, -- Left blank, hidden |hl-Ignore| (NOTE: May be invisible here in template)
+    Error {
+      bg = palette.red.bg,
+    }, -- Any erroneous construct
+    Todo {
+      bg = palette.purple.bg,
+    }, -- Anything that needs extra attention; mostly the keywords TODO FIXME and XXX
 
     -- These groups are for the native LSP client and diagnostic system. Some
     -- other LSP clients may use these groups, or use their own. Consult your
@@ -420,40 +549,116 @@ local theme = lush(function(injected_functions)
 
     -- See :h lsp-highlight, some groups may not be listed, submit a PR fix to lush-template!
     --
-    -- LspReferenceText            { } , -- Used for highlighting "text" references
-    -- LspReferenceRead            { } , -- Used for highlighting "read" references
-    -- LspReferenceWrite           { } , -- Used for highlighting "write" references
-    -- LspCodeLens                 { } , -- Used to color the virtual text of the codelens. See |nvim_buf_set_extmark()|.
-    -- LspCodeLensSeparator        { } , -- Used to color the seperator between two or more code lens.
-    -- LspSignatureActiveParameter { } , -- Used to highlight the active parameter in the signature help. See |vim.lsp.handlers.signature_help()|.
+    LspReferenceText {
+      bg = palette.bg6,
+      fg = palette.fg2,
+    }, -- Used for highlighting "text" references
+    LspReferenceRead {
+      bg = palette.bg6,
+      fg = palette.fg2,
+    }, -- Used for highlighting "read" references
+    LspReferenceWrite {
+      bg = palette.bg6,
+      fg = palette.fg2,
+    }, -- Used for highlighting "write" references
+    LspCodeLens {
+      fg = palette.fg5,
+    }, -- Used to color the virtual text of the codelens. See |nvim_buf_set_extmark()|.
+    LspCodeLensSeparator {
+      fg = palette.fg6,
+    }, -- Used to color the seperator between two or more code lens.
+    LspSignatureActiveParameter {
+      bg = palette.bg5,
+      fg = palette.fg,
+    }, -- Used to highlight the active parameter in the signature help. See |vim.lsp.handlers.signature_help()|.
 
     -- See :h diagnostic-highlights, some groups may not be listed, submit a PR fix to lush-template!
     --
-    -- DiagnosticError            { } , -- Used as the base highlight group. Other Diagnostic highlights link to this by default (except Underline)
-    -- DiagnosticWarn             { } , -- Used as the base highlight group. Other Diagnostic highlights link to this by default (except Underline)
-    -- DiagnosticInfo             { } , -- Used as the base highlight group. Other Diagnostic highlights link to this by default (except Underline)
-    -- DiagnosticHint             { } , -- Used as the base highlight group. Other Diagnostic highlights link to this by default (except Underline)
-    -- DiagnosticOk               { } , -- Used as the base highlight group. Other Diagnostic highlights link to this by default (except Underline)
-    -- DiagnosticVirtualTextError { } , -- Used for "Error" diagnostic virtual text.
-    -- DiagnosticVirtualTextWarn  { } , -- Used for "Warn" diagnostic virtual text.
-    -- DiagnosticVirtualTextInfo  { } , -- Used for "Info" diagnostic virtual text.
-    -- DiagnosticVirtualTextHint  { } , -- Used for "Hint" diagnostic virtual text.
-    -- DiagnosticVirtualTextOk    { } , -- Used for "Ok" diagnostic virtual text.
-    -- DiagnosticUnderlineError   { } , -- Used to underline "Error" diagnostics.
-    -- DiagnosticUnderlineWarn    { } , -- Used to underline "Warn" diagnostics.
-    -- DiagnosticUnderlineInfo    { } , -- Used to underline "Info" diagnostics.
-    -- DiagnosticUnderlineHint    { } , -- Used to underline "Hint" diagnostics.
-    -- DiagnosticUnderlineOk      { } , -- Used to underline "Ok" diagnostics.
-    -- DiagnosticFloatingError    { } , -- Used to color "Error" diagnostic messages in diagnostics float. See |vim.diagnostic.open_float()|
-    -- DiagnosticFloatingWarn     { } , -- Used to color "Warn" diagnostic messages in diagnostics float.
-    -- DiagnosticFloatingInfo     { } , -- Used to color "Info" diagnostic messages in diagnostics float.
-    -- DiagnosticFloatingHint     { } , -- Used to color "Hint" diagnostic messages in diagnostics float.
-    -- DiagnosticFloatingOk       { } , -- Used to color "Ok" diagnostic messages in diagnostics float.
-    -- DiagnosticSignError        { } , -- Used for "Error" signs in sign column.
-    -- DiagnosticSignWarn         { } , -- Used for "Warn" signs in sign column.
-    -- DiagnosticSignInfo         { } , -- Used for "Info" signs in sign column.
-    -- DiagnosticSignHint         { } , -- Used for "Hint" signs in sign column.
-    -- DiagnosticSignOk           { } , -- Used for "Ok" signs in sign column.
+    DiagnosticError {
+      fg = palette.red.fg,
+    }, -- Used as the base highlight group. Other Diagnostic highlights link to this by default (except Underline)
+    DiagnosticWarn {
+      fg = palette.yellow.fg2,
+    }, -- Used as the base highlight group. Other Diagnostic highlights link to this by default (except Underline)
+    DiagnosticInfo {
+      fg = palette.secondary.fg,
+    }, -- Used as the base highlight group. Other Diagnostic highlights link to this by default (except Underline)
+    DiagnosticHint {
+      fg = palette.tertiary.fg,
+    }, -- Used as the base highlight group. Other Diagnostic highlights link to this by default (except Underline)
+    DiagnosticOk {
+      fg = palette.green.fg,
+    }, -- Used as the base highlight group. Other Diagnostic highlights link to this by default (except Underline)
+    DiagnosticVirtualTextError {
+      fg = palette.red.fg,
+    }, -- Used for "Error" diagnostic virtual text.
+    DiagnosticVirtualTextWarn {
+      fg = palette.yellow.fg2,
+    }, -- Used for "Warn" diagnostic virtual text.
+    DiagnosticVirtualTextInfo {
+      fg = palette.secondary.fg,
+    }, -- Used for "Info" diagnostic virtual text.
+    DiagnosticVirtualTextHint {
+      fg = palette.tertiary.fg,
+    }, -- Used for "Hint" diagnostic virtual text.
+    DiagnosticVirtualTextOk {
+      fg = palette.green.fg,
+    }, -- Used for "Ok" diagnostic virtual text.
+    DiagnosticUnderlineError {
+      underline = true,
+      sp = palette.red.fg,
+    }, -- Used to underline "Error" diagnostics.
+    DiagnosticUnderlineWarn {
+      underline = true,
+      sp = palette.yellow.fg2,
+    }, -- Used to underline "Warn" diagnostics.
+    DiagnosticUnderlineInfo {
+      underline = true,
+      sp = palette.secondary.fg,
+    }, -- Used to underline "Info" diagnostics.
+    DiagnosticUnderlineHint {
+      underline = true,
+      sp = palette.tertiary.fg,
+    }, -- Used to underline "Hint" diagnostics.
+    DiagnosticUnderlineOk {
+      underline = true,
+      sp = palette.green.fg,
+    }, -- Used to underline "Ok" diagnostics.
+    DiagnosticFloatingError {
+      fg = palette.red.fg,
+    }, -- Used to color "Error" diagnostic messages in diagnostics float. See |vim.diagnostic.open_float()|
+    DiagnosticFloatingWarn {
+      fg = palette.yellow.fg2,
+    }, -- Used to color "Warn" diagnostic messages in diagnostics float.
+    DiagnosticFloatingInfo {
+      fg = palette.secondary.fg,
+    }, -- Used to color "Info" diagnostic messages in diagnostics float.
+    DiagnosticFloatingHint {
+      fg = palette.tertiary.fg,
+    }, -- Used to color "Hint" diagnostic messages in diagnostics float.
+    DiagnosticFloatingOk {
+      fg = palette.green.fg,
+    }, -- Used to color "Ok" diagnostic messages in diagnostics float.
+    DiagnosticSignError {
+      fg = palette.red.fg,
+    }, -- Used for "Error" signs in sign column.
+    DiagnosticSignWarn {
+      fg = palette.yellow.fg2,
+    }, -- Used for "Warn" signs in sign column.
+    DiagnosticSignInfo {
+      fg = palette.secondary.fg,
+    }, -- Used for "Info" signs in sign column.
+    DiagnosticSignHint {
+      fg = palette.tertiary.fg,
+    }, -- Used for "Hint" signs in sign column.
+    DiagnosticSignOk {
+      fg = palette.green.fg,
+    }, -- Used for "Ok" signs in sign column.
+    DiagnosticDeprecated {
+      strikethrough = true,
+      underdashed = true,
+      sp = palette.fg6,
+    },
 
     -- Tree-Sitter syntax groups.
     --
@@ -472,55 +677,165 @@ local theme = lush(function(injected_functions)
     --
     -- For more information see https://github.com/rktjmp/lush.nvim/issues/109
 
-    -- sym"@text.literal"      { }, -- Comment
-    -- sym"@text.reference"    { }, -- Identifier
-    -- sym"@text.title"        { }, -- Title
-    -- sym"@text.uri"          { }, -- Underlined
-    -- sym"@text.underline"    { }, -- Underlined
-    -- sym"@text.todo"         { }, -- Todo
-    -- sym"@comment"           { }, -- Comment
-    -- sym"@punctuation"       { }, -- Delimiter
-    -- sym"@constant"          { }, -- Constant
-    -- sym"@constant.builtin"  { }, -- Special
-    -- sym"@constant.macro"    { }, -- Define
-    -- sym"@define"            { }, -- Define
-    -- sym"@macro"             { }, -- Macro
+    sym '@text.literal' {
+      fg = palette.green.fg,
+    }, -- Comment
+    sym '@text.reference' {
+      fg = palette.secondary.fg,
+    }, -- Identifier
+    sym '@text.title' {
+      fg = palette.green.fg.darken(20),
+    }, -- Title
+    sym '@text.uri' {
+      fg = palette.secondary.fg,
+      underline = true,
+    }, -- Underlined
+    sym '@text.underline' {
+      underline = true,
+    }, -- Underlined
+    sym '@text.todo' {
+      bg = palette.purple.bg,
+    }, -- Todo
+    sym '@comment' {
+      fg = palette.comment,
+    }, -- Comment
+    sym '@punctuation' {
+      fg = palette.fg.lighten(20),
+    }, -- Delimiter
+    sym '@constant' {
+      fg = palette.secondary.bg6,
+    }, -- Constant
+    sym '@constant.builtin' {
+      fg = palette.teal.fg,
+    }, -- Special
+    sym '@constant.macro' {
+      fg = palette.tertiary.bg6,
+    }, -- Define
+    sym '@define' {
+      fg = palette.tertiary.bg6.lighten(20),
+    }, -- Define
+    sym '@macro' {
+      fg = palette.tertiary.bg6.lighten(20),
+    }, -- Macro
     sym '@string' {
       fg = palette.green.fg,
     }, -- String
-    -- sym"@string.escape"     { }, -- SpecialChar
-    -- sym"@string.special"    { }, -- SpecialChar
-    -- sym"@character"         { }, -- Character
-    -- sym"@character.special" { }, -- SpecialChar
-    -- sym"@number"            { }, -- Number
-    -- sym"@boolean"           { }, -- Boolean
-    -- sym"@float"             { }, -- Float
-    -- sym"@function"          { }, -- Function
-    -- sym"@function.builtin"  { }, -- Special
-    -- sym"@function.macro"    { }, -- Macro
-    -- sym"@parameter"         { }, -- Identifier
-    -- sym"@method"            { }, -- Function
-    -- sym"@field"             { }, -- Identifier
-    sym '@property' {
-      fg = palette.blue.fg,
+    sym '@string.escape' {
+      fg = palette.green.fg.darken(20),
+    }, -- SpecialChar
+    sym '@string.special' {
+      fg = palette.green.fg.darken(20),
+    }, -- SpecialChar
+    sym '@character' {
+      fg = palette.green.fg.darken(30),
+    }, -- Character
+    sym '@character.special' {
+      fg = palette.green.fg.darken(30),
+    }, -- SpecialChar
+    sym '@number' {
+      fg = palette.fg6.saturation(80),
+    }, -- Number
+    sym '@boolean' {
+      fg = palette.cyan.fg,
+    }, -- Boolean
+    sym '@float' {
+      fg = palette.fg6.saturation(80),
+    }, -- Float
+    sym '@function' {
+      fg = palette.tertiary.bg6,
+    }, -- Function
+    sym '@function.builtin' {
+      fg = palette.teal.fg,
+    }, -- Special
+    sym '@function.macro' {
+      fg = palette.tertiary.bg6.lighten(20),
+    }, -- Macro
+    sym '@parameter' {
+      fg = palette.secondary.fg,
     }, -- Identifier
-    -- sym"@constructor"       { }, -- Special
-    -- sym"@conditional"       { }, -- Conditional
-    -- sym"@repeat"            { }, -- Repeat
-    -- sym"@label"             { }, -- Label
-    -- sym"@operator"          { }, -- Operator
-    -- sym"@keyword"           { }, -- Keyword
-    -- sym"@exception"         { }, -- Exception
-    -- sym"@variable"          { }, -- Identifier
-    -- sym"@type"              { }, -- Type
-    -- sym"@type.definition"   { }, -- Typedef
-    -- sym"@storageclass"      { }, -- StorageClass
-    -- sym"@structure"         { }, -- Structure
-    -- sym"@namespace"         { }, -- Identifier
-    -- sym"@include"           { }, -- Include
-    -- sym"@preproc"           { }, -- PreProc
-    -- sym"@debug"             { }, -- Debug
-    -- sym"@tag"               { }, -- Tag
+    sym '@method' {
+      fg = palette.tertiary.bg6,
+    }, -- Function
+    sym '@field' {
+      fg = palette.tertiary.bg6.lighten(30),
+    }, -- Identifier
+    sym '@property' {
+      fg = palette.fg5.saturation(20),
+    }, -- Identifier
+    sym '@constructor' {
+      fg = palette.tertiary.bg6,
+    }, -- Special
+    sym '@conditional' {
+      fg = palette.secondary.fg4,
+    }, -- Conditional
+    sym '@repeat' {
+      fg = palette.secondary.fg4,
+    }, -- Repeat
+    sym '@label' {
+      fg = palette.secondary.fg2,
+    }, -- Label
+    sym '@operator' {
+      fg = palette.secondary.fg2,
+    }, -- Operator
+    sym '@keyword' {
+      fg = palette.secondary.fg3.saturation(20).darken(30),
+    }, -- Keyword
+    sym '@exception' {
+      fg = palette.secondary.fg2,
+    }, -- Exception
+    sym '@variable' {
+      fg = palette.fg3.saturation(50),
+    }, -- Identifier
+    sym '@type' {
+      fg = palette.tertiary.fg,
+    }, -- Type
+    sym '@type.definition' {
+      fg = palette.tertiary.fg,
+    }, -- Typedef
+    sym '@storageclass' {
+      fg = palette.tertiary.fg,
+    }, -- StorageClass
+    sym '@structure' {
+      fg = palette.tertiary.fg,
+    }, -- Structure
+    sym '@namespace' {
+      fg = palette.tertiary.fg,
+    }, -- Identifier
+    sym '@include' {
+      fg = palette.tertiary.fg2,
+    }, -- Include
+    sym '@preproc' {
+      fg = palette.tertiary.fg2,
+    }, -- PreProc
+    sym '@debug' {
+      fg = palette.teal.fg,
+    }, -- Debug
+    sym '@tag' {
+      fg = palette.fg5.saturation(80),
+    }, -- Tag
+    sym '@tag.builtin' {
+      fg = palette.fg4.saturation(80),
+    }, -- Tag
+    sym '@tag.attribute' {
+      fg = palette.fg5.saturation(30),
+    },
+    sym '@keyword.return' {
+      fg = palette.tertiary.fg.darken(15),
+    },
+    sym '@keyword.import' {
+      fg = palette.tertiary.fg.darken(15),
+    },
+    sym '@lsp.type.class' {
+      fg = palette.fg5.saturation(80),
+    },
+
+    -- custom stuff
+    StatusLineAccent { fg = palette.secondary.fg, bg = palette.secondary.bg2 },
+    StatusLineInsertAccent { fg = palette.green.fg, bg = palette.green.bg },
+    StatusLineVisualAccent { fg = palette.magenta.fg, bg = palette.magenta.bg },
+    StatusLineReplaceAccent { fg = palette.red.fg, bg = palette.red.bg },
+    StatusLineCmdLineAccent { fg = palette.teal.fg, bg = palette.teal.bg },
+    StatusLineTerminalAccent { fg = palette.tertiary.fg, bg = palette.tertiary.bg },
   }
 end)
 

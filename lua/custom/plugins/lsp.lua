@@ -35,7 +35,6 @@ return {
       { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
-      'pmizio/typescript-tools.nvim',
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
@@ -194,19 +193,15 @@ return {
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
-        --
+        -- disable this one because using typescript-tools (setup on separate file)
         eslint = {
-          on_attach = function()
+          on_attach = function(client, bufnr)
+            client.server_capabilities.diagnosticProvider = nil
+
             vim.api.nvim_create_autocmd('BufWritePre', {
-              callback = function(event)
-                local client = vim.lsp.get_clients({ bufnr = event.buf, name = 'eslint' })[1]
-                if client then
-                  local diag = vim.diagnostic.get(event.buf, { namespace = vim.lsp.diagnostic.get_namespace(client.id) })
-                  if #diag > 0 then
-                    vim.cmd 'EslintFixAll'
-                  end
-                end
+              buffer = bufnr,
+              callback = function()
+                vim.cmd 'EslintFixAll'
               end,
             })
           end,
@@ -215,7 +210,6 @@ return {
               mode = 'auto',
             },
           },
-          cmd = nix_env.wrap_mason_binary 'eslint-lsp',
         },
 
         lua_ls = {
@@ -231,7 +225,6 @@ return {
               -- diagnostics = { disable = { 'missing-fields' } },
             },
           },
-          cmd = nix_env.wrap_mason_binary 'lua-language-server',
         },
       }
 
@@ -245,29 +238,12 @@ return {
         install_root_dir = vim.fn.stdpath 'data' .. '/mason',
       }
 
-      if nix_env.mason_wrapper ~= '' then
-        local mason_registry = require 'mason-registry'
-        mason_registry:on('package:install:success', function(pkg)
-          local pkg_files = pkg:get_install_path() .. '/vscode-languageserver-protocol/node_modules/vscode-languageserver-protocol/lib/common/files.js'
-          if vim.fn.filereadable(pkg_files) == 1 then
-            local content = vim.fn.readfile(pkg_files)
-            for i, line in ipairs(content) do
-              if line:match 'spawn%(command' then
-                content[i] = line:gsub('spawn%(command', string.format("spawn('%s', [command]", nix_env.mason_wrapper))
-                break
-              end
-            end
-            vim.fn.writefile(content, pkg_files)
-          end
-        end)
-      end
-
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        'eslint-lsp',
+        'eslint_d',
         'typescript-language-server',
         'rnix-lsp',
       })
@@ -276,6 +252,11 @@ return {
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
+            if server_name == 'tsserver' or server_name == 'ts_ls' then
+              -- prevent typescript servers being added, we using typescript-tools
+              return
+            end
+
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
