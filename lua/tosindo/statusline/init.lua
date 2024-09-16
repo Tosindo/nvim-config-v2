@@ -161,7 +161,7 @@ local function copilot()
   end
 end
 
-M.active = function()
+_G.status_line_active = function()
   return table.concat {
     '%#Statusline#',
     update_mode_colors(),
@@ -203,7 +203,7 @@ function M.setup()
         return
       end
 
-      vim.opt_local.statusline = M.active()
+      vim.opt_local.statusline = '%!v:lua.status_line_active()'
       vim.w.has_custom_statusline = 'active'
     end,
   })
@@ -223,20 +223,6 @@ function M.setup()
     end,
   })
 
-  vim.api.nvim_create_autocmd({
-    'ModeChanged',
-    'DiagnosticChanged',
-  }, {
-    group = statusline_group,
-    callback = function()
-      if vim.w.has_custom_statusline ~= 'active' then
-        return
-      end
-
-      vim.opt_local.statusline = M.active()
-    end,
-  })
-
   vim.api.nvim_create_autocmd('LspAttach', {
     group = statusline_group,
     desc = 'Update copilot attached status',
@@ -244,17 +230,6 @@ function M.setup()
       local client = vim.lsp.get_client_by_id(args.data.client_id)
       if client and client.name == 'copilot' then
         copilot_attached = true
-        require('copilot.api').register_status_notification_handler(function()
-          -- find buffer with b.has_custom_statusline == 'active'
-          -- and set it to the M.active()
-          for _, win in ipairs(vim.api.nvim_list_wins()) do
-            if vim.w[win].has_custom_statusline == 'active' then
-              vim.api.nvim_set_option_value('statusline', M.active(), {
-                win = win,
-              })
-            end
-          end
-        end)
         return true
       end
       return false
