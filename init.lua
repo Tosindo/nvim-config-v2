@@ -10,6 +10,8 @@ vim.g.have_nerd_font = true
 require 'options'
 require 'keymaps'
 require 'autocommands'
+local nix_env = require('nix-env')
+nix_env.setup()
 require 'lazy-path'
 require 'lazy-setup'
 

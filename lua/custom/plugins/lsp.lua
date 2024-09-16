@@ -31,6 +31,8 @@ return {
       'hrsh7th/cmp-nvim-lsp',
     },
     config = function()
+      local nix_env = require 'nix-env'
+
       -- Brief aside: **What is LSP?**
       --
       -- LSP is an initialism you've probably heard, but might not understand what it is.
@@ -203,6 +205,7 @@ return {
               mode = 'auto',
             },
           },
+          cmd = nix_env.wrap_mason_binary 'eslint-lsp',
         },
 
         lua_ls = {
@@ -218,6 +221,7 @@ return {
               -- diagnostics = { disable = { 'missing-fields' } },
             },
           },
+          cmd = nix_env.wrap_mason_binary 'lua-language-server',
         },
       }
 
@@ -227,7 +231,26 @@ return {
       --    :Mason
       --
       --  You can press `g?` for help in this menu.
-      require('mason').setup()
+      require('mason').setup {
+        install_root_dir = vim.fn.stdpath 'data' .. '/mason',
+      }
+
+      if nix_env.mason_wrapper ~= '' then
+        local mason_registry = require 'mason-registry'
+        mason_registry:on('package:install:success', function(pkg)
+          local pkg_files = pkg:get_install_path() .. '/vscode-languageserver-protocol/node_modules/vscode-languageserver-protocol/lib/common/files.js'
+          if vim.fn.filereadable(pkg_files) == 1 then
+            local content = vim.fn.readfile(pkg_files)
+            for i, line in ipairs(content) do
+              if line:match 'spawn%(command' then
+                content[i] = line:gsub('spawn%(command', string.format("spawn('%s', [command]", nix_env.mason_wrapper))
+                break
+              end
+            end
+            vim.fn.writefile(content, pkg_files)
+          end
+        end)
+      end
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
@@ -236,6 +259,7 @@ return {
         'stylua', -- Used to format Lua code
         'eslint-lsp',
         'typescript-language-server',
+        'rnix-lsp',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
