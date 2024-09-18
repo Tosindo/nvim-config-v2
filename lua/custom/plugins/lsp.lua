@@ -199,7 +199,7 @@ return {
         -- disable this one because using typescript-tools (setup on separate file)
         eslint = {
           on_attach = function(client, bufnr)
-            client.server_capabilities.diagnosticProvider = nil
+            -- client.server_capabilities.diagnosticProvider = nil
 
             vim.api.nvim_create_autocmd('BufWritePre', {
               buffer = bufnr,
@@ -211,6 +211,14 @@ return {
           settings = {
             workingDirectory = {
               mode = 'auto',
+            },
+          },
+        },
+
+        vtsls = {
+          experimental = {
+            completion = {
+              enableServerSideFuzzyMatch = true,
             },
           },
         },
