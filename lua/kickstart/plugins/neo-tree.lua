@@ -10,14 +10,15 @@ return {
     'MunifTanjim/nui.nvim',
   },
   cmd = 'Neotree',
-  keys = {
-    { '<S-Tab>', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
-  },
+  -- keys = {
+  --   { '<S-Tab>', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+  -- },
   opts = {
+    open_files_do_not_replace_types = { 'terminal', 'Trouble', 'qf', 'edgy', 'fidget' },
     filesystem = {
       window = {
         mappings = {
-          ['<S-Tab>'] = 'close_window',
+          -- ['<S-Tab>'] = 'close_window',
           ['<2-LeftMouse>'] = 'open_with_window_picker',
           ['<cr>'] = 'open_with_window_picker',
         },

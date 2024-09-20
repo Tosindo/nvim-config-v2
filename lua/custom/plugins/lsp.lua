@@ -1,6 +1,24 @@
 -- LSP Plugins
 return {
   {
+    'artemave/workspace-diagnostics.nvim',
+    keys = {
+      {
+        ';ddd',
+        function()
+          for _, client in
+            ipairs(vim.lsp.get_clients {
+              bufnr = vim.api.nvim_get_current_buf(),
+            })
+          do
+            require('workspace-diagnostics').populate_workspace_diagnostics(client, 0)
+          end
+        end,
+        desc = 'Workspace Diagnostics',
+      },
+    },
+  },
+  {
     'aznhe21/actions-preview.nvim',
     config = function()
       require('actions-preview').setup()
@@ -35,6 +53,8 @@ return {
       { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
+      'artemave/workspace-diagnostics.nvim',
+      'nvim-neotest/nvim-nio',
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
@@ -47,7 +67,7 @@ return {
       'nvim-java/nvim-java',
     },
     config = function()
-      local nix_env = require 'nix-env'
+      local nio = require 'nio'
 
       -- Brief aside: **What is LSP?**
       --
@@ -199,7 +219,7 @@ return {
         -- disable this one because using typescript-tools (setup on separate file)
         eslint = {
           on_attach = function(client, bufnr)
-            -- client.server_capabilities.diagnosticProvider = nil
+            require('workspace-diagnostics').populate_workspace_diagnostics(client, bufnr)
 
             vim.api.nvim_create_autocmd('BufWritePre', {
               buffer = bufnr,
@@ -215,13 +235,34 @@ return {
           },
         },
 
-        vtsls = {
-          experimental = {
-            completion = {
-              enableServerSideFuzzyMatch = true,
-            },
-          },
-        },
+        -- vtsls = {
+        --   on_attach = function(client, bufnr)
+        --     require('workspace-diagnostics').populate_workspace_diagnostics(client, bufnr)
+        --   end,
+        --
+        --   experimental = {
+        --     completion = {
+        --       enableServerSideFuzzyMatch = true,
+        --       entriesLimit = 7,
+        --     },
+        --   },
+        --   autoUseWorkspaceTsdk = true,
+        --   typescript = {
+        --     tsserver = {
+        --       pluginPaths = { './node_modules' },
+        --     },
+        --     preferences = {
+        --       includePackageJsonAutoImports = 'off',
+        --     },
+        --     globalPlugins = {
+        --       {
+        --         ['name'] = '@styled/typescript-styled-plugin',
+        --         ['location'] = '/home/ivmsilva/.npm-global/lib',
+        --         ['enableForWorkspaceTypeScriptVersions'] = true,
+        --       },
+        --     },
+        --   },
+        -- },
 
         lua_ls = {
           -- cmd = {...},
@@ -285,6 +326,62 @@ return {
       }
     end,
   },
+  {
+    'folke/trouble.nvim',
+    opts = {}, -- for default options, refer to the configuration section for custom setup.
+    cmd = 'Trouble',
+    keys = {
+      {
+        ';xx',
+        '<cmd>Trouble diagnostics toggle<cr>',
+        desc = 'Diagnostics (Trouble)',
+      },
+      {
+        ';xX',
+        '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
+        desc = 'Buffer Diagnostics (Trouble)',
+      },
+      {
+        ';xcs',
+        '<cmd>Trouble symbols toggle focus=false<cr>',
+        desc = 'Symbols (Trouble)',
+      },
+      {
+        ';xcl',
+        '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
+        desc = 'LSP Definitions / references / ... (Trouble)',
+      },
+      {
+        ';xL',
+        '<cmd>Trouble loclist toggle<cr>',
+        desc = 'Location List (Trouble)',
+      },
+      {
+        ';xQ',
+        '<cmd>Trouble qflist toggle<cr>',
+        desc = 'Quickfix List (Trouble)',
+      },
+    },
+  },
+  {
+    'hedyhli/outline.nvim',
+    config = function()
+      -- Example mapping to toggle outline
+      vim.keymap.set('n', ';o', '<cmd>Outline<CR>', { desc = 'Toggle Outline' })
+
+      require('outline').setup {
+        -- Your setup opts here (leave empty to use defaults)
+      }
+    end,
+  },
+  {
+    'smjonas/inc-rename.nvim',
+    config = function()
+      require('inc_rename').setup {}
+      vim.keymap.set('n', '<leader>rn', ':IncRename ', { desc = 'Incremental Rename' })
+    end,
+  },
+
   -- disabled because it's suspected to cause conform to format with all LSPs on wrong buffers
   -- {
   --   'hinell/lsp-timeout.nvim',

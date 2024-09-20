@@ -6,20 +6,21 @@ return {
   --     require('tosindo.fluent').setup()
   --   end,
   -- },
-  {
-    'zbirenbaum/copilot.lua',
-    lazy = true,
-    event = 'InsertEnter',
-    cmd = 'Copilot',
-    config = function()
-      require('copilot').setup {
-        -- handled by copilot-cmp
-        suggestion = { enabled = false },
-        -- handled by copilot-cmp
-        panel = { enabled = false },
-      }
-    end,
-  },
+  -- {
+  --   'zbirenbaum/copilot.lua',
+  --   lazy = true,
+  --   event = 'InsertEnter',
+  --   cmd = 'Copilot',
+  --   config = function()
+  --     require('copilot').setup {
+  --
+  --       -- handled by copilot-cmp
+  --       suggestion = { enabled = false },
+  --       -- handled by copilot-cmp
+  --       panel = { enabled = false },
+  --     }
+  --   end,
+  -- },
   {
     'olimorris/codecompanion.nvim',
     dependencies = {

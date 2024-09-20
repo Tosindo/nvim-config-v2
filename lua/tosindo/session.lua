@@ -1,6 +1,20 @@
 local M = {}
 
--- Default configuration
+--- Auto close settings
+---@class AutoClose
+---@field buftypes? string[] Buftypes that will be auto-closed before saving.
+---@field filetypes? string[] Filetypes that will be auto-closed before saving.
+
+--- Configuration for the session plugin
+---@class Config
+---@field session_dir? string The directory to store session info.
+---@field session_file? string The file (within the session_dir) that contains the link between CWD and Git Branches and a session file.
+---@field auto_close? AutoClose the auto close settings
+
+---@alias StoredSessions table<string, table<string, string>> Session data stored in the JSON link file
+---@alias ClosedBuffers table<number, { buf: string, name: string, buftype: string, filetype: string }> Buffers auto closed to avoid errors when loading a session
+
+---@type Config
 M.config = {
   session_dir = vim.fn.stdpath 'data' .. '/sessions/',
   session_file = 'sessions.json',
@@ -11,7 +25,7 @@ M.config = {
   },
 }
 
--- Custom events
+---@enum Events
 M.events = {
   pre_save = 'SessionPreSave',
   post_save = 'SessionPostSave',
@@ -19,7 +33,8 @@ M.events = {
   post_load = 'SessionPostLoad',
 }
 
--- Initialize the plugin
+--- Setup the session manager
+---@param opts Config
 function M.setup(opts)
   M.config = vim.tbl_deep_extend('force', M.config, opts or {})
   vim.fn.mkdir(M.config.session_dir, 'p')
@@ -29,8 +44,8 @@ function M.setup(opts)
     desc = 'Automatically save session on exit',
   })
 
-  vim.api.nvim_create_user_command('SessionList', function()
-    M.list_sessions_command(opts.args)
+  vim.api.nvim_create_user_command('SessionList', function(o)
+    M.list_sessions_command(o.args)
   end, {
     nargs = '?',
     complete = function()
@@ -38,28 +53,34 @@ function M.setup(opts)
     end,
   })
 
-  vim.api.nvim_create_user_command('SessionLoad', function()
-    M.load_session_command(opts.args)
+  vim.api.nvim_create_user_command('SessionLoad', function(o)
+    M.load_session_command(o.args)
   end, { nargs = 1, complete = M.complete_sessions })
+
+  M.clear_unlinked_sessions()
 end
 
--- Generate a unique session ID
+--- Generate a unique session ID
+---@return string
 local function generate_session_id()
   return vim.fn.sha256(tostring(os.time()) .. vim.fn.rand())
 end
 
--- Get current working directory
+--- Get current working directory
+---@return string
 local function get_cwd()
   return vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h')
 end
 
--- Get current git branch
+--- Get current git branch
+---@return string
 local function get_git_branch()
   local branch = vim.fn.systemlist('git rev-parse --abbrev-ref HEAD 2>/dev/null')[1] or ''
   return (branch == '' or branch == 'HEAD') and 'no-git' or branch
 end
 
--- Load sessions data
+--- Load sessions data
+---@return StoredSessions
 local function load_sessions_data()
   local file = io.open(M.config.session_dir .. M.config.session_file, 'r')
   if not file then
@@ -70,7 +91,8 @@ local function load_sessions_data()
   return vim.fn.json_decode(content) or {}
 end
 
--- Save sessions data
+--- Save sessions data
+---@param data StoredSessions
 local function save_sessions_data(data)
   local file = io.open(M.config.session_dir .. M.config.session_file, 'w')
   if not file then
@@ -80,7 +102,8 @@ local function save_sessions_data(data)
   file:close()
 end
 
--- Function to close buffers based on auto_close configuration
+--- Function to close buffers based on auto_close configuration
+---@return ClosedBuffers
 local function close_auto_close_buffers()
   local closed_buffers = {}
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -104,7 +127,8 @@ local function close_auto_close_buffers()
   return closed_buffers
 end
 
--- Function to restore closed buffers
+--- Function to restore closed buffers
+---@param closed_buffers ClosedBuffers
 local function restore_closed_buffers(closed_buffers)
   for _, buf_info in ipairs(closed_buffers) do
     local new_buf = vim.api.nvim_create_buf(false, true)
@@ -120,7 +144,7 @@ local function restore_closed_buffers(closed_buffers)
   end
 end
 
--- Save current session
+--- Save current session
 function M.save_session()
   vim.api.nvim_exec_autocmds('User', { pattern = M.events.pre_save })
 
@@ -145,7 +169,9 @@ function M.save_session()
   vim.api.nvim_exec_autocmds('User', { pattern = M.events.post_save })
 end
 
--- List available sessions
+--- List available sessions
+---@param scope 'global'|'local'|nil
+---@return table<number,{cwd: string, branches: string[]}>
 function M.list_sessions(scope)
   local sessions = load_sessions_data()
   local result = {}
@@ -159,18 +185,23 @@ function M.list_sessions(scope)
     end
   else
     local cwd = get_cwd()
+    local branch = get_git_branch()
     if sessions[cwd] then
       result = { { cwd = cwd, branches = {} } }
-      for branch, _ in pairs(sessions[cwd]) do
-        table.insert(result[1].branches, branch)
+      for br, _ in pairs(sessions[cwd]) do
+        table.insert(result[1].branches, br)
       end
+
+      table.sort(result[1].branches, function(a)
+        return a == branch
+      end)
     end
   end
-
   return result
 end
 
--- Command to list sessions
+--- Command to list sessions
+--- @param args any
 function M.list_sessions_command(args)
   local scope = args == 'global' and 'global' or 'local'
   local sessions = M.list_sessions(scope)
@@ -191,7 +222,8 @@ function M.list_sessions_command(args)
   vim.api.nvim_echo({ { table.concat(lines, '\n'), 'Normal' } }, true, {})
 end
 
--- Load a specific session
+--- Load a specific session
+---@param session_identifier string|number
 function M.load_session(session_identifier)
   vim.api.nvim_exec_autocmds('User', { pattern = M.events.pre_load })
 
@@ -233,13 +265,15 @@ function M.load_session(session_identifier)
   end
 end
 
--- Command to load a session
+--- Command to load a session
+---@param args any
 function M.load_session_command(args)
   M.load_session(args)
 end
 
--- Completion function for SessionLoad command
-function M.complete_sessions(_, _, _)
+--- Completion function for SessionLoad command
+---@return string[]
+function M.complete_sessions()
   local sessions = load_sessions_data()
   local completions = {}
   local cwd = get_cwd()
@@ -264,6 +298,55 @@ function M.complete_sessions(_, _, _)
   end
 
   return completions
+end
+
+--- Clear sessions with no link, to save space.
+function M.clear_unlinked_sessions()
+  local nio = require 'nio'
+
+  nio.run(function()
+    local sessions = load_sessions_data()
+
+    local valid_session_files = {
+      M.config.session_file,
+    }
+
+    for _, branches in pairs(sessions) do
+      for _, file in pairs(branches) do
+        table.insert(valid_session_files, file .. '.vim')
+      end
+    end
+
+    local _, dir = nio.uv.fs_opendir(M.config.session_dir, 1000)
+
+    if dir == nil then
+      return
+    end
+
+    --- @type string|nil, {type:string, name:string}[]|nil
+    local _, files = nio.uv.fs_readdir(dir)
+
+    if files == nil then
+      return
+    end
+
+    for _, file in pairs(files) do
+      for _, valid_session_file in pairs(valid_session_files) do
+        if file.type == 'file' and file.name == valid_session_file then
+          goto continue
+        end
+      end
+
+      local path = vim.fn.resolve(M.config.session_dir .. '/' .. file.name)
+      if path ~= nil then
+        nio.uv.fs_unlink(path)
+      end
+
+      ::continue::
+    end
+
+    nio.uv.fs_closedir(dir)
+  end)
 end
 
 return M

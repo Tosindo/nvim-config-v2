@@ -1,6 +1,9 @@
 return { -- Autocompletion
   {
-    'hrsh7th/nvim-cmp',
+    -- 'hrsh7th/nvim-cmp',
+    -- temporarily using this fork which improves performance
+    'yioneko/nvim-cmp',
+    branch = 'perf',
     event = 'InsertEnter',
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source
@@ -44,6 +47,18 @@ return { -- Autocompletion
 
       local lspkind = require 'lspkind'
       cmp.setup {
+        performance = {
+          debounce = 0,
+          throttle = 0,
+          max_view_entries = 15,
+        },
+        -- matching = {
+        --   disallow_fuzzy_matching = true,
+        --   disallow_fullfuzzy_matching = true,
+        --   disallow_partial_fuzzy_matching = true,
+        --   disallow_partial_matching = false,
+        --   disallow_prefix_unmatching = true,
+        -- },
         formatting = {
           fields = { 'abbr', 'kind', 'menu' },
           expandable_indicator = true,
@@ -52,7 +67,7 @@ return { -- Autocompletion
             maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
 
             symbol_map = {
-              Copilot = '',
+              -- Copilot = '',
             },
           },
         },
@@ -111,9 +126,9 @@ return { -- Autocompletion
             -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
             group_index = 0,
           },
-          {
-            name = 'copilot',
-          },
+          -- {
+          --   name = 'copilot',
+          -- },
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
@@ -122,10 +137,10 @@ return { -- Autocompletion
     end,
   },
 
-  {
-    'zbirenbaum/copilot-cmp',
-    config = function()
-      require('copilot_cmp').setup()
-    end,
-  },
+  -- {
+  --   'zbirenbaum/copilot-cmp',
+  --   config = function()
+  --     require('copilot_cmp').setup()
+  --   end,
+  -- },
 }

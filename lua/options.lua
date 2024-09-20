@@ -63,10 +63,21 @@ vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
 -- For better compatibility with session storage & focus
-vim.opt.splitkeep = 'cursor'
+vim.opt.splitkeep = 'screen'
+
+-- views can only be fully collapsed with global statusline
+vim.opt.laststatus = 3
 
 -- Enables 24-bit RGB color in the |TUI|.
 vim.opt.termguicolors = true
 
 -- relative numbers
 vim.opt.relativenumber = true
+
+vim.filetype.add {
+  extension = {
+    ['http'] = 'http',
+  },
+}
+
+vim.loader.enable()
