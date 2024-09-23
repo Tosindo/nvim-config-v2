@@ -101,4 +101,33 @@ return {
       require('telescope').load_extension 'noice'
     end,
   },
+  {
+    dir = '~/esque.nvim/',
+    name = 'esque-nvim',
+    dev = true,
+    dependencies = {
+      'CWood-sdf/banana.nvim',
+      'MunifTanjim/nui.nvim',
+    },
+    config = function()
+      require('esque').setup {
+        splits = {
+          {
+            side = 'left',
+            name = 'Sidebar',
+            groups = {
+              {
+                name = 'Tree',
+                icon = '󰙅 ',
+                kbd = 'f',
+                windows = {
+                  {},
+                },
+              },
+            },
+          },
+        },
+      }
+    end,
+  },
 }
