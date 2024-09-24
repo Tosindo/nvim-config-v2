@@ -124,7 +124,7 @@ return {
           end,
           pinned = true,
           size = { height = 0.5 },
-          open = 'Neotree reveal position=left filesystem',
+          open = 'Neotree action=focus reveal position=left filesystem',
         },
         {
           title = 'Neo-Tree Git',
@@ -133,7 +133,7 @@ return {
             return vim.b[buf].neo_tree_source == 'git_status'
           end,
           pinned = true,
-          open = 'Neotree position=right git_status',
+          open = 'Neotree action=show position=right git_status',
         },
         -- {
         --   title = 'LSP Doc Symbols',

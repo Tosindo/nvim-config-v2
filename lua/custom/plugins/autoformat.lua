@@ -34,6 +34,7 @@ return {
     formatters_by_ft = {
       lua = { 'stylua' },
       nix = { 'nixfmt' },
+      toml = { 'taplo' },
     },
   },
   config = function(_, opts)

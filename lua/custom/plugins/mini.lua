@@ -76,6 +76,25 @@ return {
     }
 
     require('mini.pairs').setup()
-    require('mini.animate').setup()
+
+    local use_animations = vim.g['neovide'] ~= true
+
+    require('mini.animate').setup {
+      cursor = {
+        enable = use_animations,
+      },
+      scroll = {
+        enable = use_animations,
+      },
+      resize = {
+        enable = use_animations,
+      },
+      open = {
+        enable = use_animations,
+      },
+      close = {
+        enable = use_animations,
+      },
+    }
   end,
 }

@@ -21,6 +21,7 @@ return {
       'jsdoc',
       'http',
       'regex',
+      'toml',
     },
     -- Autoinstall languages that are not installed
     auto_install = true,
