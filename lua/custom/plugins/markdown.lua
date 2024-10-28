@@ -11,4 +11,7 @@ return {
 
     'nvim-tree/nvim-web-devicons',
   },
+  opts = {
+    filetypes = { 'markdown', 'markdown.mdx' },
+  },
 }

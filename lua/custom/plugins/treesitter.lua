@@ -40,4 +40,8 @@ return {
   --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
   --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
   --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+  config = function(_, opts)
+    require('nvim-treesitter.configs').setup(opts)
+    vim.treesitter.language.register('markdown', { 'md', 'markdown.mdx' })
+  end,
 }

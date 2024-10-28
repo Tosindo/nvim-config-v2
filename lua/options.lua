@@ -77,6 +77,7 @@ vim.opt.relativenumber = true
 vim.filetype.add {
   extension = {
     ['http'] = 'http',
+    ['mdx'] = 'markdown.mdx',
   },
 }
 

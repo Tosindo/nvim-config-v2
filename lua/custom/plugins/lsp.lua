@@ -278,6 +278,8 @@ return {
             },
           },
         },
+
+        mdx_analyzer = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -293,14 +295,19 @@ return {
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
+
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'eslint_d',
         'typescript-language-server',
         'rnix-lsp',
         'jdtls',
+        'mdx-analyzer',
       })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+      require('mason-tool-installer').setup {
+        ensure_installed = ensure_installed,
+      }
 
       require('mason-lspconfig').setup {
         handlers = {
@@ -323,6 +330,31 @@ return {
 
           require('lspconfig').jdtls.setup {}
         end,
+      }
+
+      local lspconfig = require 'lspconfig'
+      lspconfig.sourcekit.setup {
+        capabilities = vim.tbl_deep_extend('force', {}, capabilities, {
+          workspace = {
+            didChangeWatchedFiles = {
+              dynamicRegistration = true,
+            },
+          },
+        }),
+        on_attach = function(arg1, arg2)
+          vim.keymap.set('n', '<leader>dp', require('xbase.pickers.builtin').actions, { desc = 'XBase picker' })
+          vim.keymap.set('n', '<leader>dl', function()
+            require('xbase.logger').toggle(false, true)
+          end, { desc = 'XBase logger' })
+        end,
+        filetypes = { 'swift' },
+        root_dir = lspconfig.util.root_pattern('*.xcodeproj', '*.xcworkspace', 'Package.swift', '.git', 'project.yml', 'Project.swift'),
+        cmd = {
+          'xcrun',
+          'sourcekit-lsp',
+          '--log-level',
+          'debug',
+        },
       }
     end,
   },
@@ -379,6 +411,34 @@ return {
     config = function()
       require('inc_rename').setup {}
       vim.keymap.set('n', '<leader>rn', ':IncRename ', { desc = 'Incremental Rename' })
+    end,
+  },
+  {
+    'xbase-lab/xbase',
+    build = 'make install', -- or "make install && make free_space" (not recommended, longer build time)
+    dependencies = {
+      'neovim/nvim-lspconfig',
+      'nvim-telescope/telescope.nvim', -- optional
+      'nvim-lua/plenary.nvim', -- optional/requirement of telescope.nvim
+      'stevearc/dressing.nvim', -- optional (in case you don't use telescope but something else)
+    },
+    config = function()
+      require('xbase').setup {
+        log_level = vim.log.levels.DEBUG,
+        simctl = {
+          iOS = {
+            'iPhone 15 Pro',
+          },
+        },
+        mappings = {
+          build_picker = 0,
+          run_picker = 0,
+          watch_picker = 0,
+          all_picker = 0,
+          toggle_split_log_buffer = 0,
+          toggle_vsplit_log_buffer = 0,
+        },
+      }
     end,
   },
 
