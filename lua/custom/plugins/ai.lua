@@ -22,6 +22,11 @@ return {
   --   end,
   -- },
   {
+    'github/copilot.vim',
+    cmd = 'Copilot',
+    event = 'InsertEnter',
+  },
+  {
     'olimorris/codecompanion.nvim',
     dependencies = {
       'nvim-lua/plenary.nvim',
